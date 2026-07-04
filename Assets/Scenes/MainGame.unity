@@ -34866,6 +34866,87 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 2}
   m_EdgeRadius: 0
+--- !u!1 &525651274
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 525651277}
+  - component: {fileID: 525651276}
+  - component: {fileID: 525651275}
+  - component: {fileID: 525651278}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &525651275
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525651274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0bdaf61748fccb41b568578df9b4514, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  secondsPerDifficultyLevel: 120
+  maxDifficultyLevel: 3
+  moveSpeedIncreasePerLevel: 0.5
+  accuracyBonusPerLevel: 0.05
+  homingTurnSpeedIncreasePerLevel: 1
+--- !u!114 &525651276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525651274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1032e5bfb3dd2f9478c666c18e71c343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pauseMenuUI: {fileID: 175312536}
+  gameOverUI: {fileID: 894396691}
+--- !u!4 &525651277
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525651274}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.103686, y: 3.5762062, z: -0.021180373}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &525651278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525651274}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e1bf19ef45d720479034eb29ba6f2c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: {fileID: 972072288}
+  healthText: {fileID: 2003628255}
+  timerText: {fileID: 1977991158}
+  startTimerOnAwake: 1
 --- !u!1 &525706370
 GameObject:
   m_ObjectHideFlags: 0
@@ -62401,8 +62482,8 @@ MonoBehaviour:
   superJumpHoldForce: 50
   maxSuperJumpHoldTime: 0.5
   footstepSound: {fileID: 8300000, guid: 96f77dff4ab468449b9386f15e839258, type: 3}
-  footstepVolume: 0.5
-  footstepInterval: 0.35
+  footstepVolume: 0.3
+  footstepInterval: 0.4
   footstepPitchRandomness: 0.05
   groundCheckPoint: {fileID: 1199054543}
   groundLayer:
@@ -62458,7 +62539,7 @@ MonoBehaviour:
   OnDeath:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 525651276}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: GameOver
         m_Mode: 1
@@ -137229,3 +137310,4 @@ SceneRoots:
   - {fileID: 175312540}
   - {fileID: 894396695}
   - {fileID: 844541789}
+  - {fileID: 525651277}

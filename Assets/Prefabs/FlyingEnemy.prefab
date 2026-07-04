@@ -246,8 +246,8 @@ MonoBehaviour:
   volume: 1
   pitchRandomness: 0.08
   movementSound: {fileID: 8300000, guid: 96f77dff4ab468449b9386f15e839258, type: 3}
-  movementSoundVolume: 0.5
-  movementSoundInterval: 0.5
+  movementSoundVolume: 0.2
+  movementSoundInterval: 0.4
   movementSoundPitchRandomness: 0.08
 --- !u!1 &6485701434304798163
 GameObject:
