@@ -5,7 +5,7 @@ public class Projectile : MonoBehaviour
     [Header("Projectile Settings")]
     [SerializeField] private float speed = 15f;
     [SerializeField] private float lifeTime = 3f;
-    [SerializeField] private int damage = 10;
+    [SerializeField] private int damage = 1;
     [SerializeField] private LayerMask hitLayer;
 
     private Vector2 moveDirection;

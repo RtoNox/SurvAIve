@@ -4,7 +4,7 @@ using UnityEngine.Events;
 public class Health : MonoBehaviour
 {
     [Header("Health Settings")]
-    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private int maxHealth = 10;
     [SerializeField] private bool destroyOnDeath = false;
     [SerializeField] private float destroyDelay = 1.5f;
 
