@@ -1,26 +1,32 @@
-using System.Collections.Generic;
 using UnityEngine;
+using Pathfinding;
 
 [RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Seeker))]
 public class GroundEnemyAI : MonoBehaviour
 {
     [Header("Target Settings")]
     [SerializeField] private Transform player;
 
     [Header("Pathfinding Settings")]
-    [SerializeField] private GroundPathfinder groundPathfinder;
-    [SerializeField] private float pathRefreshRate = 0.5f;
-    [SerializeField] private float nodeReachDistance = 0.35f;
+    [SerializeField] private float pathRefreshRate = 0.35f;
+    [SerializeField] private float waypointReachDistance = 0.35f;
 
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 4f;
-    [SerializeField] private float jumpForce = 10f;
+    [SerializeField] private float jumpForce = 11f;
     [SerializeField] private bool faceMoveDirection = true;
 
     [Header("Ground Check Settings")]
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
+
+    [Header("Jump Point Settings")]
+    [SerializeField] private LayerMask jumpPointLayer;
+    [SerializeField] private float jumpPointCheckRadius = 0.45f;
+    [SerializeField] private float minimumHeightDifferenceToJump = 0.5f;
+    [SerializeField] private float jumpCooldown = 0.35f;
 
     [Header("Shooting Settings")]
     [SerializeField] private GameObject bulletPrefab;
@@ -37,22 +43,21 @@ public class GroundEnemyAI : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
-    private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
-    private static readonly int IsFalling = Animator.StringToHash("IsFalling");
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
     private static readonly int Shoot = Animator.StringToHash("Shoot");
     private static readonly int Die = Animator.StringToHash("Die");
 
     private Rigidbody2D rb;
+    private Seeker seeker;
     private Health health;
 
-    private List<GroundPathNode.Connection> currentPath = new List<GroundPathNode.Connection>();
+    private Path currentPath;
+    private int currentWaypointIndex;
 
     private float fireTimer;
-    private float pathRefreshTimer;
-
-    private int currentPathIndex;
+    private float nextPathTime;
+    private float jumpCooldownTimer;
 
     private Vector2 aimDirection;
 
@@ -62,10 +67,12 @@ public class GroundEnemyAI : MonoBehaviour
     private bool playerInRange;
     private bool hasClearShot;
     private bool shouldStopAndShoot;
+    private bool pathRequestInProgress;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        seeker = GetComponent<Seeker>();
         health = GetComponent<Health>();
 
         if (animator == null)
@@ -90,8 +97,7 @@ public class GroundEnemyAI : MonoBehaviour
     private void Start()
     {
         FindPlayerIfMissing();
-        FindPathfinderIfMissing();
-        RefreshPath();
+        RequestNewPath();
     }
 
     private void Update()
@@ -99,16 +105,10 @@ public class GroundEnemyAI : MonoBehaviour
         if (isDead) return;
 
         fireTimer -= Time.deltaTime;
-        pathRefreshTimer -= Time.deltaTime;
+        jumpCooldownTimer -= Time.deltaTime;
 
         FindPlayerIfMissing();
-        FindPathfinderIfMissing();
-
-        isGrounded = Physics2D.OverlapCircle(
-            groundCheckPoint.position,
-            groundCheckRadius,
-            groundLayer
-        );
+        UpdateGroundCheck();
 
         if (player == null)
         {
@@ -121,12 +121,11 @@ public class GroundEnemyAI : MonoBehaviour
 
         playerInRange = PlayerInShootingRange();
         hasClearShot = HasClearShot();
-
         shouldStopAndShoot = playerInRange && hasClearShot;
 
-        if (pathRefreshTimer <= 0f)
+        if (Time.time >= nextPathTime && !pathRequestInProgress)
         {
-            RefreshPath();
+            RequestNewPath();
         }
 
         if (shouldStopAndShoot)
@@ -155,6 +154,7 @@ public class GroundEnemyAI : MonoBehaviour
         }
 
         FollowPath();
+        CheckForJumpPoint();
     }
 
     private void FindPlayerIfMissing()
@@ -169,83 +169,80 @@ public class GroundEnemyAI : MonoBehaviour
         }
     }
 
-    private void FindPathfinderIfMissing()
+    private void UpdateGroundCheck()
     {
-        if (groundPathfinder != null) return;
-
-        groundPathfinder = FindObjectOfType<GroundPathfinder>();
+        isGrounded = Physics2D.OverlapCircle(
+            groundCheckPoint.position,
+            groundCheckRadius,
+            groundLayer
+        );
     }
 
-    private void RefreshPath()
+    private void RequestNewPath()
     {
-        pathRefreshTimer = pathRefreshRate;
+        if (player == null || seeker == null) return;
 
-        if (groundPathfinder == null || player == null)
+        nextPathTime = Time.time + pathRefreshRate;
+        pathRequestInProgress = true;
+
+        seeker.StartPath(transform.position, player.position, OnPathComplete);
+    }
+
+    private void OnPathComplete(Path path)
+    {
+        pathRequestInProgress = false;
+
+        if (path.error)
         {
-            currentPath.Clear();
-            currentPathIndex = 0;
+            currentPath = null;
+            currentWaypointIndex = 0;
             return;
         }
 
-        currentPath = groundPathfinder.FindPath(transform.position, player.position);
-        currentPathIndex = 0;
+        currentPath = path;
+        currentWaypointIndex = 0;
     }
 
     private void FollowPath()
     {
-        if (currentPath == null || currentPath.Count == 0)
-        {
-            MoveDirectlyTowardPlayer();
-            return;
-        }
-
-        if (currentPathIndex >= currentPath.Count)
-        {
-            MoveDirectlyTowardPlayer();
-            return;
-        }
-
-        GroundPathNode.Connection currentConnection = currentPath[currentPathIndex];
-
-        if (currentConnection == null || currentConnection.targetNode == null)
-        {
-            currentPathIndex++;
-            return;
-        }
-
-        Vector2 targetPosition = currentConnection.targetNode.transform.position;
-        Vector2 currentPosition = transform.position;
-
-        float distanceToNode = Vector2.Distance(currentPosition, targetPosition);
-
-        if (distanceToNode <= nodeReachDistance)
-        {
-            currentPathIndex++;
-            return;
-        }
-
-        MoveTowardPosition(targetPosition);
-
-        if (currentConnection.requiresJump && isGrounded)
-        {
-            Jump();
-        }
-    }
-
-    private void MoveDirectlyTowardPlayer()
-    {
-        if (player == null)
+        if (currentPath == null || currentPath.vectorPath == null || currentPath.vectorPath.Count == 0)
         {
             StopHorizontalMovement();
             return;
         }
 
-        MoveTowardPosition(player.position);
-    }
+        if (currentWaypointIndex >= currentPath.vectorPath.Count)
+        {
+            StopHorizontalMovement();
+            return;
+        }
 
-    private void MoveTowardPosition(Vector2 targetPosition)
-    {
-        float directionX = Mathf.Sign(targetPosition.x - transform.position.x);
+        Vector2 enemyPosition = transform.position;
+        Vector2 waypointPosition = currentPath.vectorPath[currentWaypointIndex];
+
+        float distanceToWaypoint = Vector2.Distance(enemyPosition, waypointPosition);
+
+        if (distanceToWaypoint <= waypointReachDistance)
+        {
+            currentWaypointIndex++;
+
+            if (currentWaypointIndex >= currentPath.vectorPath.Count)
+            {
+                StopHorizontalMovement();
+                return;
+            }
+
+            waypointPosition = currentPath.vectorPath[currentWaypointIndex];
+        }
+
+        Vector2 directionToWaypoint = waypointPosition - enemyPosition;
+
+        if (Mathf.Abs(directionToWaypoint.x) < 0.05f)
+        {
+            return;
+        }
+
+        float directionX = Mathf.Sign(directionToWaypoint.x);
 
         rb.velocity = new Vector2(directionX * moveSpeed, rb.velocity.y);
     }
@@ -255,9 +252,42 @@ public class GroundEnemyAI : MonoBehaviour
         rb.velocity = new Vector2(0f, rb.velocity.y);
     }
 
-    private void Jump()
+    private void CheckForJumpPoint()
     {
-        rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        if (!isGrounded) return;
+        if (jumpCooldownTimer > 0f) return;
+        if (player == null) return;
+
+        Collider2D jumpPointCollider = Physics2D.OverlapCircle(
+            transform.position,
+            jumpPointCheckRadius,
+            jumpPointLayer
+        );
+
+        if (jumpPointCollider == null) return;
+
+        GroundEnemyJumpPoint jumpPoint = jumpPointCollider.GetComponent<GroundEnemyJumpPoint>();
+
+        if (jumpPoint == null) return;
+
+        bool playerIsHigher = player.position.y > transform.position.y + minimumHeightDifferenceToJump;
+
+        if (jumpPoint.OnlyJumpIfPlayerIsHigher && !playerIsHigher)
+        {
+            return;
+        }
+
+        Jump(jumpPoint.JumpForceMultiplier);
+    }
+
+    private void Jump(float jumpForceMultiplier)
+    {
+        jumpCooldownTimer = jumpCooldown;
+
+        rb.velocity = new Vector2(
+            rb.velocity.x,
+            jumpForce * jumpForceMultiplier
+        );
     }
 
     private void AimAtPlayer()
@@ -378,20 +408,16 @@ public class GroundEnemyAI : MonoBehaviour
 
         bool isMoving = Mathf.Abs(rb.velocity.x) > 0.1f && isGrounded;
         bool isJumping = !isGrounded && rb.velocity.y > 0.1f;
-        bool isFalling = !isGrounded && rb.velocity.y < -0.1f;
         bool isCurrentlyShooting = shouldStopAndShoot && fireTimer > fireRate * 0.5f;
 
         animator.SetBool(IsMoving, isMoving);
-        animator.SetBool(IsGrounded, isGrounded);
         animator.SetBool(IsJumping, isJumping);
-        animator.SetBool(IsFalling, isFalling);
         animator.SetBool(IsShooting, isCurrentlyShooting);
     }
 
     private void HandleDeath()
     {
         isDead = true;
-
         rb.velocity = Vector2.zero;
 
         if (animator != null)
@@ -407,10 +433,23 @@ public class GroundEnemyAI : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, shootingRange);
 
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, jumpPointCheckRadius);
+
         if (groundCheckPoint != null)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(groundCheckPoint.position, groundCheckRadius);
+        }
+
+        if (currentPath != null && currentPath.vectorPath != null)
+        {
+            Gizmos.color = Color.cyan;
+
+            for (int i = 0; i < currentPath.vectorPath.Count - 1; i++)
+            {
+                Gizmos.DrawLine(currentPath.vectorPath[i], currentPath.vectorPath[i + 1]);
+            }
         }
 
         if (!drawLineOfSightGizmo) return;
