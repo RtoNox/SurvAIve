@@ -20,7 +20,6 @@ public class PlayerMovement : MonoBehaviour
     private bool canDoubleJump;
     private bool isFacingRight = true;
     
-    // Animation properties (optional)
     private Animator animator;
     private static readonly int IsRunning = Animator.StringToHash("IsRunning");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
@@ -31,7 +30,6 @@ public class PlayerMovement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         
-        // Create ground check point if not assigned
         if (groundCheckPoint == null)
         {
             GameObject checkPoint = new GameObject("GroundCheck");
@@ -43,25 +41,20 @@ public class PlayerMovement : MonoBehaviour
     
     void Update()
     {
-        // Get input
         moveInput = Input.GetAxisRaw("Horizontal");
         
-        // Check if grounded
         isGrounded = Physics2D.OverlapCircle(groundCheckPoint.position, groundCheckRadius, groundLayer);
         
-        // Reset double jump when grounded
         if (isGrounded)
         {
             canDoubleJump = true;
         }
         
-        // Jump input
         if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.W))
         {
             Jump();
         }
         
-        // Flip sprite based on movement direction
         if (moveInput > 0 && !isFacingRight)
         {
             Flip();
@@ -71,13 +64,11 @@ public class PlayerMovement : MonoBehaviour
             Flip();
         }
         
-        // Update animations
         UpdateAnimations();
     }
     
     void FixedUpdate()
     {
-        // Apply horizontal movement
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
     }
     
@@ -85,13 +76,11 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGrounded)
         {
-            // First jump
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             canDoubleJump = true;
         }
         else if (canDoubleJump)
         {
-            // Double jump
             rb.velocity = new Vector2(rb.velocity.x, doubleJumpForce);
             canDoubleJump = false;
         }
@@ -115,7 +104,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     
-    // Visualize ground check in editor
     void OnDrawGizmosSelected()
     {
         if (groundCheckPoint != null)
