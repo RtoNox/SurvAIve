@@ -199,3 +199,6 @@ MonoBehaviour:
   hitLayer:
     serializedVersion: 2
     m_Bits: 328
+  hitSound: {fileID: 8300000, guid: 48e73d7f17d59c846a7ac7b93a9b328b, type: 3}
+  hitVolume: 1
+  hitPitchRandomness: 0.1

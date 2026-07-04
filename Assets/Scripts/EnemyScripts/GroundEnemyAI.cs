@@ -35,12 +35,27 @@ public class GroundEnemyAI : MonoBehaviour
     [SerializeField] private float fireRate = 1.2f;
     [SerializeField] private int damage = 8;
 
+    [SerializeField, Range(0f, 1f)] private float accuracy = 0.75f;
+    [SerializeField] private float maxInaccuracyAngle = 25f;
+
     [Header("Line Of Sight Settings")]
     [SerializeField] private LayerMask lineOfSightMask;
     [SerializeField] private bool drawLineOfSightGizmo = true;
 
     [Header("Animation Settings")]
     [SerializeField] private Animator animator;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private float shootVolume = 1f;
+    [SerializeField] private float shootPitchRandomness = 0.08f;
+
+    [SerializeField] private AudioClip footstepSound;
+    [SerializeField] private float footstepVolume = 0.7f;
+    [SerializeField] private float footstepInterval = 0.35f;
+    [SerializeField] private float footstepPitchRandomness = 0.1f;
+
+    private float footstepTimer;
 
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
@@ -133,6 +148,7 @@ public class GroundEnemyAI : MonoBehaviour
             TryShoot();
         }
 
+        HandleFootsteps();
         FaceEnemy();
         UpdateAnimations();
     }
@@ -155,6 +171,26 @@ public class GroundEnemyAI : MonoBehaviour
 
         FollowPath();
         CheckForJumpPoint();
+    }
+
+    private void HandleFootsteps()
+    {
+        if (!isGrounded) return;
+        if (shouldStopAndShoot) return;
+        if (Mathf.Abs(rb.velocity.x) <= 0.1f) return;
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer > 0f) return;
+
+        footstepTimer = footstepInterval;
+
+        SoundEffectPlayer.PlaySound(
+            footstepSound,
+            transform.position,
+            footstepVolume,
+            footstepPitchRandomness
+        );
     }
 
     private void FindPlayerIfMissing()
@@ -331,6 +367,21 @@ public class GroundEnemyAI : MonoBehaviour
         return hit.collider.CompareTag("Player");
     }
 
+    private Vector2 ApplyAccuracy(Vector2 direction)
+    {
+        if (direction == Vector2.zero) return direction;
+
+        float inaccuracyAmount = 1f - accuracy;
+        float spreadAngle = maxInaccuracyAngle * inaccuracyAmount;
+
+        float randomAngle = Random.Range(-spreadAngle, spreadAngle);
+
+        Quaternion rotation = Quaternion.Euler(0f, 0f, randomAngle);
+        Vector2 inaccurateDirection = rotation * direction;
+
+        return inaccurateDirection.normalized;
+    }
+
     private void TryShoot()
     {
         if (fireTimer > 0f) return;
@@ -339,13 +390,22 @@ public class GroundEnemyAI : MonoBehaviour
 
         fireTimer = fireRate;
 
+        SoundEffectPlayer.PlaySound(
+            shootSound,
+            firePoint.position,
+            shootVolume,
+            shootPitchRandomness
+        );  
+
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
         Projectile projectile = bullet.GetComponent<Projectile>();
 
         if (projectile != null)
         {
-            projectile.SetDirection(aimDirection);
+            Vector2 finalShootDirection = ApplyAccuracy(aimDirection);
+
+            projectile.SetDirection(finalShootDirection);
             projectile.SetDamage(damage);
         }
 
@@ -426,6 +486,12 @@ public class GroundEnemyAI : MonoBehaviour
         }
 
         enabled = false;
+    }
+
+    public void ApplyDifficultyScaling(float moveSpeedBonus, float accuracyBonus)
+    {
+        moveSpeed += moveSpeedBonus;
+        accuracy = Mathf.Clamp01(accuracy + accuracyBonus);
     }
 
     private void OnDrawGizmosSelected()

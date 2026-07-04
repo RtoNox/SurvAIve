@@ -16,6 +16,11 @@ public class PlayerShooter : MonoBehaviour
     [Header("Animation Settings")]
     [SerializeField] private Animator animator;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private float shootVolume = 1f;
+    [SerializeField] private float shootPitchRandomness = 0.05f;
+
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
     private static readonly int Shoot = Animator.StringToHash("Shoot");
 
@@ -77,6 +82,13 @@ public class PlayerShooter : MonoBehaviour
         if (bulletPrefab == null || firePoint == null) return;
 
         fireTimer = fireRate;
+
+        SoundEffectPlayer.PlaySound(
+            shootSound,
+            firePoint.position,
+            shootVolume,
+            shootPitchRandomness
+        );
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 

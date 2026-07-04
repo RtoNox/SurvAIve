@@ -21,12 +21,28 @@ public class FlyingEnemyAI : MonoBehaviour
     [SerializeField] private int damage = 8;
     [SerializeField] private float homingTurnSpeed = 180f;
 
+    [SerializeField, Range(0f, 1f)] private float accuracy = 0.75f;
+    [SerializeField] private float maxInaccuracyAngle = 25f;
+
     [Header("Line Of Sight Settings")]
     [SerializeField] private LayerMask lineOfSightMask;
     [SerializeField] private bool drawLineOfSightGizmo = true;
 
     [Header("Animation Settings")]
     [SerializeField] private Animator animator;
+
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip lockonSound;
+    [SerializeField] private float volume = 1f;
+    [SerializeField] private float pitchRandomness = 0.08f;
+
+    [SerializeField] private AudioClip movementSound;
+    [SerializeField] private float movementSoundVolume = 0.7f;
+    [SerializeField] private float movementSoundInterval = 0.45f;
+    [SerializeField] private float movementSoundPitchRandomness = 0.08f;
+
+    private float movementSoundTimer;
 
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsFlying = Animator.StringToHash("IsFlying");
@@ -109,7 +125,28 @@ public class FlyingEnemyAI : MonoBehaviour
             TryShoot();
         }
 
+        HandleMovementSound();
         UpdateAnimations();
+    }
+
+    private void HandleMovementSound()
+    {
+        if (aiPath == null) return;
+        if (aiPath.isStopped) return;
+        if (aiPath.velocity.magnitude <= 0.1f) return;
+
+        movementSoundTimer -= Time.deltaTime;
+
+        if (movementSoundTimer > 0f) return;
+
+        movementSoundTimer = movementSoundInterval;
+
+        SoundEffectPlayer.PlaySound(
+            movementSound,
+            transform.position,
+            movementSoundVolume,
+            movementSoundPitchRandomness
+        );
     }
 
     private void FindPlayerIfMissing()
@@ -170,6 +207,21 @@ public class FlyingEnemyAI : MonoBehaviour
         }
 
         return hit.collider.CompareTag("Player");
+    }
+
+    private Vector2 ApplyAccuracy(Vector2 direction)
+    {
+        if (direction == Vector2.zero) return direction;
+
+        float inaccuracyAmount = 1f - accuracy;
+        float spreadAngle = maxInaccuracyAngle * inaccuracyAmount;
+
+        float randomAngle = Random.Range(-spreadAngle, spreadAngle);
+
+        Quaternion rotation = Quaternion.Euler(0f, 0f, randomAngle);
+        Vector2 inaccurateDirection = rotation * direction;
+
+        return inaccurateDirection.normalized;
     }
 
     private void SetMovementState(bool shouldMove)
@@ -234,13 +286,29 @@ public class FlyingEnemyAI : MonoBehaviour
 
         fireTimer = fireRate;
 
+        SoundEffectPlayer.PlaySound(
+            shootSound,
+            firePoint.position,
+            volume,
+            pitchRandomness
+        );
+
+        SoundEffectPlayer.PlaySound(
+            lockonSound,
+            firePoint.position,
+            volume,
+            pitchRandomness
+        );
+
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
+
+        Vector2 finalShootDirection = ApplyAccuracy(aimDirection);
 
         Projectile normalProjectile = bullet.GetComponent<Projectile>();
 
         if (normalProjectile != null)
         {
-            normalProjectile.SetDirection(aimDirection);
+            normalProjectile.SetDirection(finalShootDirection);
             normalProjectile.SetDamage(damage);
         }
 
@@ -248,7 +316,7 @@ public class FlyingEnemyAI : MonoBehaviour
 
         if (homingProjectile != null)
         {
-            homingProjectile.SetDirection(aimDirection);
+            homingProjectile.SetDirection(finalShootDirection);
             homingProjectile.SetDamage(damage);
             homingProjectile.SetHomingTarget(player);
             homingProjectile.SetHomingTurnSpeed(homingTurnSpeed);
@@ -308,6 +376,18 @@ public class FlyingEnemyAI : MonoBehaviour
         }
 
         enabled = false;
+    }
+
+    public void ApplyDifficultyScaling(float moveSpeedBonus, float accuracyBonus, float homingTurnSpeedMultiplier)
+    {
+        moveSpeed += moveSpeedBonus;
+        accuracy = Mathf.Clamp01(accuracy + accuracyBonus);
+        homingTurnSpeed *= homingTurnSpeedMultiplier;
+
+        if (aiPath != null)
+        {
+            aiPath.maxSpeed = moveSpeed;
+        }
     }
 
     private void OnDrawGizmosSelected()

@@ -11,6 +11,11 @@ public class HomingProjectile : MonoBehaviour
     [Header("Hit Settings")]
     [SerializeField] private LayerMask hitLayer;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private float hitVolume = 1f;
+    [SerializeField] private float hitPitchRandomness = 0.1f;
+
     private Rigidbody2D rb;
     private Transform target;
 
@@ -103,6 +108,13 @@ public class HomingProjectile : MonoBehaviour
 
         if (destroyOnHit)
         {
+            SoundEffectPlayer.PlaySound(
+                hitSound,
+                transform.position,
+                hitVolume,
+                hitPitchRandomness
+            );
+
             Destroy(gameObject);
         }
     }
