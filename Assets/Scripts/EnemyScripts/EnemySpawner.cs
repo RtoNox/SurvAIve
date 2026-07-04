@@ -27,6 +27,7 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Difficulty Scaling")]
     public bool increaseEnemiesOverTime = true;
+    private EnemyDifficultyScaler difficultyScaler;
 
     [Tooltip("Every X seconds, each spawn point will spawn one more enemy per cycle.")]
     public float increaseAmountEverySeconds = 120f;
@@ -47,12 +48,12 @@ public class EnemySpawner : MonoBehaviour
 
     private readonly List<GameObject> aliveEnemies = new List<GameObject>();
 
-    private void Start()
+    void Start()
     {
+        difficultyScaler = GetComponent<EnemyDifficultyScaler>();
+
         if (startOnAwake)
-        {
             StartSpawning();
-        }
     }
 
     public void StartSpawning()
@@ -143,6 +144,11 @@ public class EnemySpawner : MonoBehaviour
         if (prefab == null) return;
 
         GameObject enemy = Instantiate(prefab, spawnPosition, Quaternion.identity);
+
+        if (difficultyScaler != null)
+        {
+            difficultyScaler.ApplyScaling(enemy);
+        }
 
         currentAlive++;
         aliveEnemies.Add(enemy);

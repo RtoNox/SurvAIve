@@ -448,6 +448,12 @@ public class GroundEnemyAI : MonoBehaviour
         enabled = false;
     }
 
+    public void ApplyDifficultyScaling(float moveSpeedBonus, float accuracyBonus)
+    {
+        moveSpeed += moveSpeedBonus;
+        accuracy = Mathf.Clamp01(accuracy + accuracyBonus);
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

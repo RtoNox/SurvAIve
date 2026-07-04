@@ -330,6 +330,18 @@ public class FlyingEnemyAI : MonoBehaviour
         enabled = false;
     }
 
+    public void ApplyDifficultyScaling(float moveSpeedBonus, float accuracyBonus, float homingTurnSpeedMultiplier)
+    {
+        moveSpeed += moveSpeedBonus;
+        accuracy = Mathf.Clamp01(accuracy + accuracyBonus);
+        homingTurnSpeed *= homingTurnSpeedMultiplier;
+
+        if (aiPath != null)
+        {
+            aiPath.maxSpeed = moveSpeed;
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
