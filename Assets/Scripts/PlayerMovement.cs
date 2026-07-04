@@ -144,6 +144,11 @@ public class PlayerMovement : MonoBehaviour
         hasSuperJump = true;
     }
 
+    public void RemoveSuperJump()
+    {
+        hasSuperJump = false;
+    }
+
     void Flip()
     {
         isFacingRight = !isFacingRight;
