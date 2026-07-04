@@ -21,6 +21,9 @@ public class FlyingEnemyAI : MonoBehaviour
     [SerializeField] private int damage = 8;
     [SerializeField] private float homingTurnSpeed = 180f;
 
+    [SerializeField, Range(0f, 1f)] private float accuracy = 0.75f;
+    [SerializeField] private float maxInaccuracyAngle = 25f;
+
     [Header("Line Of Sight Settings")]
     [SerializeField] private LayerMask lineOfSightMask;
     [SerializeField] private bool drawLineOfSightGizmo = true;
@@ -172,6 +175,21 @@ public class FlyingEnemyAI : MonoBehaviour
         return hit.collider.CompareTag("Player");
     }
 
+    private Vector2 ApplyAccuracy(Vector2 direction)
+    {
+        if (direction == Vector2.zero) return direction;
+
+        float inaccuracyAmount = 1f - accuracy;
+        float spreadAngle = maxInaccuracyAngle * inaccuracyAmount;
+
+        float randomAngle = Random.Range(-spreadAngle, spreadAngle);
+
+        Quaternion rotation = Quaternion.Euler(0f, 0f, randomAngle);
+        Vector2 inaccurateDirection = rotation * direction;
+
+        return inaccurateDirection.normalized;
+    }
+
     private void SetMovementState(bool shouldMove)
     {
         if (aiPath == null) return;
@@ -236,11 +254,13 @@ public class FlyingEnemyAI : MonoBehaviour
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
+        Vector2 finalShootDirection = ApplyAccuracy(aimDirection);
+
         Projectile normalProjectile = bullet.GetComponent<Projectile>();
 
         if (normalProjectile != null)
         {
-            normalProjectile.SetDirection(aimDirection);
+            normalProjectile.SetDirection(finalShootDirection);
             normalProjectile.SetDamage(damage);
         }
 
@@ -248,7 +268,7 @@ public class FlyingEnemyAI : MonoBehaviour
 
         if (homingProjectile != null)
         {
-            homingProjectile.SetDirection(aimDirection);
+            homingProjectile.SetDirection(finalShootDirection);
             homingProjectile.SetDamage(damage);
             homingProjectile.SetHomingTarget(player);
             homingProjectile.SetHomingTurnSpeed(homingTurnSpeed);

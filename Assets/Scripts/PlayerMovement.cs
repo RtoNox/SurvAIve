@@ -30,9 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     
     private Animator animator;
-    private static readonly int IsRunning = Animator.StringToHash("IsRunning");
-    private static readonly int IsJumping = Animator.StringToHash("IsJumping");
-    private static readonly int IsFalling = Animator.StringToHash("IsFalling");
+    private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     
     void Start()
     {
@@ -161,9 +159,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (animator != null)
         {
-            animator.SetBool(IsRunning, Mathf.Abs(moveInput) > 0.1f && isGrounded);
-            animator.SetBool(IsJumping, !isGrounded && rb.velocity.y > 0.1f);
-            animator.SetBool(IsFalling, !isGrounded && rb.velocity.y < -0.1f);
+            animator.SetBool(IsMoving, Mathf.Abs(moveInput) > 0.1f);
         }
     }
     
