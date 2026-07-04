@@ -116,6 +116,9 @@ MonoBehaviour:
   maxHealth: 1
   destroyOnDeath: 1
   destroyDelay: 1.2
+  deathSound: {fileID: 8300000, guid: 752f21b142435174c957a21e611f5d5f, type: 3}
+  deathVolume: 1
+  pitchRandomness: 0.08
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []
@@ -182,7 +185,7 @@ MonoBehaviour:
   jumpPointCheckRadius: 0.45
   minimumHeightDifferenceToJump: 0.5
   jumpCooldown: 0.35
-  bulletPrefab: {fileID: 8866157321543472470, guid: 7c0c70e959cbea544a9778b578603652, type: 3}
+  bulletPrefab: {fileID: 4938590583241389788, guid: 4280cca6391dada458f4f436f6d94667, type: 3}
   firePoint: {fileID: 4420741895955935524}
   shootingRange: 10
   fireRate: 1
@@ -194,6 +197,9 @@ MonoBehaviour:
     m_Bits: 328
   drawLineOfSightGizmo: 1
   animator: {fileID: 6480850233789921874}
+  shootSound: {fileID: 8300000, guid: bd07d2ff1da6c5b4abad689cd80752ef, type: 3}
+  shootVolume: 1
+  shootPitchRandomness: 0.08
 --- !u!1 &3590715068405655674
 GameObject:
   m_ObjectHideFlags: 0

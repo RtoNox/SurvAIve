@@ -45,6 +45,11 @@ public class GroundEnemyAI : MonoBehaviour
     [Header("Animation Settings")]
     [SerializeField] private Animator animator;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private float shootVolume = 1f;
+    [SerializeField] private float shootPitchRandomness = 0.08f;
+
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
@@ -356,6 +361,13 @@ public class GroundEnemyAI : MonoBehaviour
         if (aimDirection == Vector2.zero) return;
 
         fireTimer = fireRate;
+
+        SoundEffectPlayer.PlaySound(
+            shootSound,
+            firePoint.position,
+            shootVolume,
+            shootPitchRandomness
+        );  
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 

@@ -31,6 +31,12 @@ public class FlyingEnemyAI : MonoBehaviour
     [Header("Animation Settings")]
     [SerializeField] private Animator animator;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip shootSound;
+    [SerializeField] private AudioClip lockonSound;
+    [SerializeField] private float volume = 1f;
+    [SerializeField] private float pitchRandomness = 0.08f;
+
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsFlying = Animator.StringToHash("IsFlying");
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
@@ -251,6 +257,20 @@ public class FlyingEnemyAI : MonoBehaviour
         if (aimDirection == Vector2.zero) return;
 
         fireTimer = fireRate;
+
+        SoundEffectPlayer.PlaySound(
+            shootSound,
+            firePoint.position,
+            volume,
+            pitchRandomness
+        );
+
+        SoundEffectPlayer.PlaySound(
+            lockonSound,
+            firePoint.position,
+            volume,
+            pitchRandomness
+        );
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 

@@ -117,6 +117,9 @@ MonoBehaviour:
   maxHealth: 1
   destroyOnDeath: 1
   destroyDelay: 1.5
+  deathSound: {fileID: 8300000, guid: 752f21b142435174c957a21e611f5d5f, type: 3}
+  deathVolume: 1
+  pitchRandomness: 0.08
   OnDamaged:
     m_PersistentCalls:
       m_Calls: []
@@ -238,6 +241,10 @@ MonoBehaviour:
     m_Bits: 328
   drawLineOfSightGizmo: 1
   animator: {fileID: 6488199305464519738}
+  shootSound: {fileID: 8300000, guid: f811df7986ccdda4ca377114e7242994, type: 3}
+  lockonSound: {fileID: 8300000, guid: 05486df5afd52eb478965a33564a7698, type: 3}
+  volume: 1
+  pitchRandomness: 0.08
 --- !u!1 &6485701434304798163
 GameObject:
   m_ObjectHideFlags: 0

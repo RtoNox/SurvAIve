@@ -19,6 +19,13 @@ public class PlayerMovement : MonoBehaviour
     private bool isSuperJumping;
     private float superJumpHoldTimer;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip footstepSound;
+    [SerializeField] private float footstepVolume = 0.7f;
+    [SerializeField] private float footstepInterval = 0.5f;
+    [SerializeField] private float footstepPitchRandomness = 0.05f;
+    private float footstepTimer;
+
     [Header("References")]
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private LayerMask groundLayer;
@@ -30,7 +37,6 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     
     private Animator animator;
-    private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     
     void Start()
     {
@@ -80,13 +86,37 @@ public class PlayerMovement : MonoBehaviour
         {
             Flip();
         }
-        
-        UpdateAnimations();
+
+        HandleFootsteps();
+
+        if (animator != null)
+        {
+            animator.SetBool("IsMoving", Mathf.Abs(moveInput) > 0.1f);
+        }
     }
     
     void FixedUpdate()
     {
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+    }
+
+    void HandleFootsteps()
+    {
+        if (!isGrounded) return;
+        if (Mathf.Abs(moveInput) <= 0.1f) return;
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer > 0f) return;
+
+        footstepTimer = footstepInterval;
+
+        SoundEffectPlayer.PlaySound(
+            footstepSound,
+            transform.position,
+            footstepVolume,
+            footstepPitchRandomness
+        );
     }
 
     void Jump()
@@ -153,14 +183,6 @@ public class PlayerMovement : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
-    }
-    
-    void UpdateAnimations()
-    {
-        if (animator != null)
-        {
-            animator.SetBool(IsMoving, Mathf.Abs(moveInput) > 0.1f);
-        }
     }
     
     void OnDrawGizmosSelected()

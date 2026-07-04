@@ -8,6 +8,11 @@ public class Health : MonoBehaviour
     [SerializeField] private bool destroyOnDeath = false;
     [SerializeField] private float destroyDelay = 1.5f;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private float deathVolume = 1f;
+    [SerializeField] private float pitchRandomness = 0.08f;
+
     [Header("Events")]
     public UnityEvent OnDamaged;
     public UnityEvent OnHealed;
@@ -86,6 +91,13 @@ public class Health : MonoBehaviour
         currentHealth = 0;
 
         OnDeath?.Invoke();
+
+        SoundEffectPlayer.PlaySound(
+            deathSound,
+            transform.position,
+            deathVolume,
+            pitchRandomness
+        );
 
         if (destroyOnDeath)
         {
