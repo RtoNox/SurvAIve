@@ -11,4 +11,14 @@ public class JumpPad : MonoBehaviour
             player.GiveSuperJump();
         }
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        PlayerMovement player = collision.GetComponent<PlayerMovement>();
+
+        if (player != null)
+        {
+            player.RemoveSuperJump();
+        }
+    }
 }
