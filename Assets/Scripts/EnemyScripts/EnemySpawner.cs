@@ -16,8 +16,26 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("Spawn Settings")]
     public float spawnInterval = 3f;
-    public int maxAlive = 5;
+    public int maxAlive = 30;
     public bool startOnAwake = true;
+
+    [Tooltip("How many enemies each spawn point creates per spawn cycle.")]
+    public int enemiesPerSpawnPoint = 1;
+
+    [Tooltip("Delay between enemies spawned from the same spawn point.")]
+    public float delayBetweenEnemiesAtSamePoint = 0.35f;
+
+    [Header("Difficulty Scaling")]
+    public bool increaseEnemiesOverTime = true;
+
+    [Tooltip("Every X seconds, each spawn point will spawn one more enemy per cycle.")]
+    public float increaseAmountEverySeconds = 120f;
+
+    [Tooltip("How many extra enemies each spawn point gains whenever the timer triggers.")]
+    public int enemiesAddedPerIncrease = 1;
+
+    [Tooltip("Optional safety cap so the game does not become impossible by accident.")]
+    public int maxEnemiesPerSpawnPoint = 5;
 
     [Header("Spawn Points")]
     public Transform[] spawnPoints;
@@ -25,17 +43,17 @@ public class EnemySpawner : MonoBehaviour
     private int currentAlive = 0;
     private bool isSpawning = false;
     private Coroutine spawnRoutine;
+    private Coroutine difficultyRoutine;
 
-    // Track spawned enemies
-    private List<GameObject> aliveEnemies = new List<GameObject>();
+    private readonly List<GameObject> aliveEnemies = new List<GameObject>();
 
-    void Start()
+    private void Start()
     {
         if (startOnAwake)
+        {
             StartSpawning();
+        }
     }
-
-    // ================= CONTROL =================
 
     public void StartSpawning()
     {
@@ -43,6 +61,11 @@ public class EnemySpawner : MonoBehaviour
 
         isSpawning = true;
         spawnRoutine = StartCoroutine(SpawnLoop());
+
+        if (increaseEnemiesOverTime)
+        {
+            difficultyRoutine = StartCoroutine(DifficultyIncreaseLoop());
+        }
     }
 
     public void StopSpawning()
@@ -50,32 +73,76 @@ public class EnemySpawner : MonoBehaviour
         isSpawning = false;
 
         if (spawnRoutine != null)
+        {
             StopCoroutine(spawnRoutine);
+            spawnRoutine = null;
+        }
+
+        if (difficultyRoutine != null)
+        {
+            StopCoroutine(difficultyRoutine);
+            difficultyRoutine = null;
+        }
     }
 
-    // ================= SPAWNING =================
-
-    IEnumerator SpawnLoop()
+    private IEnumerator SpawnLoop()
     {
         while (isSpawning)
         {
             yield return new WaitForSeconds(spawnInterval);
 
             if (currentAlive >= maxAlive)
+            {
                 continue;
+            }
 
-            Spawn();
+            yield return SpawnAtEverySpawnPoint();
         }
     }
 
-    void Spawn()
+    private IEnumerator SpawnAtEverySpawnPoint()
+    {
+        if (spawnPoints != null && spawnPoints.Length > 0)
+        {
+            foreach (Transform spawnPoint in spawnPoints)
+            {
+                if (spawnPoint == null) continue;
+
+                yield return SpawnMultipleFromPoint(spawnPoint.position);
+            }
+        }
+        else
+        {
+            yield return SpawnMultipleFromPoint(transform.position);
+        }
+    }
+
+    private IEnumerator SpawnMultipleFromPoint(Vector3 spawnPosition)
+    {
+        int amountToSpawn = Mathf.Max(1, enemiesPerSpawnPoint);
+
+        for (int i = 0; i < amountToSpawn; i++)
+        {
+            if (currentAlive >= maxAlive)
+            {
+                yield break;
+            }
+
+            SpawnSingleEnemy(spawnPosition);
+
+            if (i < amountToSpawn - 1)
+            {
+                yield return new WaitForSeconds(delayBetweenEnemiesAtSamePoint);
+            }
+        }
+    }
+
+    private void SpawnSingleEnemy(Vector3 spawnPosition)
     {
         GameObject prefab = GetRandomEnemy();
         if (prefab == null) return;
 
-        Vector3 pos = GetSpawnPosition();
-
-        GameObject enemy = Instantiate(prefab, pos, Quaternion.identity);
+        GameObject enemy = Instantiate(prefab, spawnPosition, Quaternion.identity);
 
         currentAlive++;
         aliveEnemies.Add(enemy);
@@ -83,43 +150,58 @@ public class EnemySpawner : MonoBehaviour
         Health hp = enemy.GetComponent<Health>();
         if (hp != null)
         {
-            hp.OnDeath.AddListener (() =>
-            {
-                currentAlive--;
-                aliveEnemies.Remove(enemy);
-            });
+            hp.OnDeath.AddListener(() => HandleEnemyDeath(enemy));
         }
     }
 
-    GameObject GetRandomEnemy()
+    private void HandleEnemyDeath(GameObject enemy)
+    {
+        currentAlive = Mathf.Max(0, currentAlive - 1);
+        aliveEnemies.Remove(enemy);
+    }
+
+    private IEnumerator DifficultyIncreaseLoop()
+    {
+        while (isSpawning)
+        {
+            yield return new WaitForSeconds(increaseAmountEverySeconds);
+
+            enemiesPerSpawnPoint += enemiesAddedPerIncrease;
+            enemiesPerSpawnPoint = Mathf.Clamp(enemiesPerSpawnPoint, 1, maxEnemiesPerSpawnPoint);
+        }
+    }
+
+    private GameObject GetRandomEnemy()
     {
         if (enemies.Count == 0) return null;
 
         float totalWeight = 0f;
-        foreach (var e in enemies)
-            totalWeight += e.weight;
 
-        float rand = Random.value * totalWeight;
-
-        foreach (var e in enemies)
+        foreach (SpawnOption enemyOption in enemies)
         {
-            if (rand <= e.weight)
-                return e.prefab;
+            if (enemyOption == null || enemyOption.prefab == null) continue;
+            if (enemyOption.weight <= 0f) continue;
 
-            rand -= e.weight;
+            totalWeight += enemyOption.weight;
         }
 
-        return enemies[0].prefab;
-    }
+        if (totalWeight <= 0f) return null;
 
-    Vector3 GetSpawnPosition()
-    {
-        if (spawnPoints != null && spawnPoints.Length > 0)
+        float randomValue = Random.value * totalWeight;
+
+        foreach (SpawnOption enemyOption in enemies)
         {
-            Transform point = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            return point.position;
+            if (enemyOption == null || enemyOption.prefab == null) continue;
+            if (enemyOption.weight <= 0f) continue;
+
+            if (randomValue <= enemyOption.weight)
+            {
+                return enemyOption.prefab;
+            }
+
+            randomValue -= enemyOption.weight;
         }
 
-        return transform.position;
+        return null;
     }
 }

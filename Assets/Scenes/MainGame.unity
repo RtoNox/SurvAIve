@@ -58966,9 +58966,15 @@ MonoBehaviour:
   enemies:
   - prefab: {fileID: 2649665622204624898, guid: cd306c7e82084aa44a28ecf64b598111, type: 3}
     weight: 0.5
-  spawnInterval: 10
+  spawnInterval: 30
   maxAlive: 50
   startOnAwake: 1
+  enemiesPerSpawnPoint: 1
+  delayBetweenEnemiesAtSamePoint: 0.35
+  increaseEnemiesOverTime: 1
+  increaseAmountEverySeconds: 120
+  enemiesAddedPerIncrease: 1
+  maxEnemiesPerSpawnPoint: 5
   spawnPoints:
   - {fileID: 963312140}
 --- !u!1 &963729691
@@ -60050,6 +60056,9 @@ MonoBehaviour:
   jumpForce: 30
   doubleJumpForce: 25
   groundCheckRadius: 0.2
+  superJumpInitialForce: 8
+  superJumpHoldForce: 20
+  maxSuperJumpHoldTime: 0.5
   groundCheckPoint: {fileID: 1199054543}
   groundLayer:
     serializedVersion: 2
