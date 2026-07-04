@@ -198,7 +198,7 @@ MonoBehaviour:
   drawLineOfSightGizmo: 1
   animator: {fileID: 6480850233789921874}
   shootSound: {fileID: 8300000, guid: bd07d2ff1da6c5b4abad689cd80752ef, type: 3}
-  shootVolume: 1
+  shootVolume: 0.5
   shootPitchRandomness: 0.08
   footstepSound: {fileID: 8300000, guid: 1b897c8395be3264992837d3e64fb7eb, type: 3}
   footstepVolume: 0.7

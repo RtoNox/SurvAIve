@@ -243,7 +243,7 @@ MonoBehaviour:
   animator: {fileID: 6488199305464519738}
   shootSound: {fileID: 8300000, guid: f811df7986ccdda4ca377114e7242994, type: 3}
   lockonSound: {fileID: 8300000, guid: 05486df5afd52eb478965a33564a7698, type: 3}
-  volume: 1
+  volume: 0.5
   pitchRandomness: 0.08
   movementSound: {fileID: 8300000, guid: 96f77dff4ab468449b9386f15e839258, type: 3}
   movementSoundVolume: 0.2
