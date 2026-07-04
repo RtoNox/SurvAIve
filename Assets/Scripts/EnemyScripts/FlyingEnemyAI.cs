@@ -19,6 +19,7 @@ public class FlyingEnemyAI : MonoBehaviour
     [SerializeField] private float shootingRange = 8f;
     [SerializeField] private float fireRate = 1.2f;
     [SerializeField] private int damage = 8;
+    [SerializeField] private float homingTurnSpeed = 180f;
 
     [Header("Line Of Sight Settings")]
     [SerializeField] private LayerMask lineOfSightMask;
@@ -235,12 +236,22 @@ public class FlyingEnemyAI : MonoBehaviour
 
         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
-        Projectile projectile = bullet.GetComponent<Projectile>();
+        Projectile normalProjectile = bullet.GetComponent<Projectile>();
 
-        if (projectile != null)
+        if (normalProjectile != null)
         {
-            projectile.SetDirection(aimDirection);
-            projectile.SetDamage(damage);
+            normalProjectile.SetDirection(aimDirection);
+            normalProjectile.SetDamage(damage);
+        }
+
+        HomingProjectile homingProjectile = bullet.GetComponent<HomingProjectile>();
+
+        if (homingProjectile != null)
+        {
+            homingProjectile.SetDirection(aimDirection);
+            homingProjectile.SetDamage(damage);
+            homingProjectile.SetHomingTarget(player);
+            homingProjectile.SetHomingTurnSpeed(homingTurnSpeed);
         }
 
         if (animator != null)
