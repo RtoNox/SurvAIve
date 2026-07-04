@@ -43,12 +43,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 256
+  spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -95,7 +95,238 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 772
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a777b05f3af03b47badfb6e0186852a
+      internalID: -478185892
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_1
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 772
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae9f3004ae8903e44927b2949b45f0bb
+      internalID: -1393142923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_2
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 772
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d3bf70b0381228e449b8aefc23e8f175
+      internalID: 2096261180
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_3
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 772
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 83828958dcf08c34f90095004dd06501
+      internalID: -1149164702
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_4
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 516
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd7f49da32ea8cf46b0b42fc3d11cf80
+      internalID: -1699317305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_5
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 516
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c8d088a4ef7490f40875eb26ef62ff50
+      internalID: 1818021196
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_6
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 516
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f37eef722533f42488bf15883cac118b
+      internalID: -1710630302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_7
+      rect:
+        serializedVersion: 2
+        x: 768
+        y: 516
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 654edd6a86c072d4c864d21c000b2591
+      internalID: -757450870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 260
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e25a2d6c8c8a47141b6a2e36249e9f08
+      internalID: 1746058121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_9
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 260
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9b2d4a271f8e299458fff2f4f672d01f
+      internalID: 1890529122
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tilesheet 256 x 256 per Tiles_10
+      rect:
+        serializedVersion: 2
+        x: 512
+        y: 260
+        width: 256
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b0ef822d21a9574a8287a15a799199a
+      internalID: -1768283705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -106,7 +337,18 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Tilesheet 256 x 256 per Tiles_0: -478185892
+      Tilesheet 256 x 256 per Tiles_1: -1393142923
+      Tilesheet 256 x 256 per Tiles_10: -1768283705
+      Tilesheet 256 x 256 per Tiles_2: 2096261180
+      Tilesheet 256 x 256 per Tiles_3: -1149164702
+      Tilesheet 256 x 256 per Tiles_4: -1699317305
+      Tilesheet 256 x 256 per Tiles_5: 1818021196
+      Tilesheet 256 x 256 per Tiles_6: -1710630302
+      Tilesheet 256 x 256 per Tiles_7: -757450870
+      Tilesheet 256 x 256 per Tiles_8: 1746058121
+      Tilesheet 256 x 256 per Tiles_9: 1890529122
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
