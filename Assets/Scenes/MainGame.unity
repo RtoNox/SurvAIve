@@ -61919,7 +61919,7 @@ MonoBehaviour:
   mainCamera: {fileID: 414270945}
   aimPivot: {fileID: 0}
   rotateAimPivot: 0
-  animator: {fileID: 0}
+  animator: {fileID: 813740283}
 --- !u!114 &972072288
 MonoBehaviour:
   m_ObjectHideFlags: 0
