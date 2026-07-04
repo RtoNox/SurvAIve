@@ -9,7 +9,16 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float jumpForce = 12f;
     [SerializeField] private float doubleJumpForce = 10f;
     [SerializeField] private float groundCheckRadius = 0.2f;
-    
+
+    [Header("Super Jump Settings")]
+    [SerializeField] private float superJumpInitialForce = 8f;
+    [SerializeField] private float superJumpHoldForce = 20f;
+    [SerializeField] private float maxSuperJumpHoldTime = 0.5f;
+
+    private bool hasSuperJump;
+    private bool isSuperJumping;
+    private float superJumpHoldTimer;
+
     [Header("References")]
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private LayerMask groundLayer;
@@ -54,7 +63,17 @@ public class PlayerMovement : MonoBehaviour
         {
             Jump();
         }
-        
+
+        if ((Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W)) && isSuperJumping)
+        {
+            ContinueSuperJump();
+        }
+
+        if ((Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.W)) && isSuperJumping)
+        {
+            StopSuperJump();
+        }
+
         if (moveInput > 0 && !isFacingRight)
         {
             Flip();
@@ -71,11 +90,18 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
     }
-    
+
     void Jump()
     {
         if (isGrounded)
         {
+            if (hasSuperJump)
+            {
+                StartSuperJump();
+                hasSuperJump = false;
+                return;
+            }
+
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             canDoubleJump = true;
         }
@@ -85,7 +111,39 @@ public class PlayerMovement : MonoBehaviour
             canDoubleJump = false;
         }
     }
-    
+
+    void StartSuperJump()
+    {
+        isSuperJumping = true;
+        superJumpHoldTimer = maxSuperJumpHoldTime;
+
+        rb.velocity = new Vector2(rb.velocity.x, superJumpInitialForce);
+        canDoubleJump = false;
+    }
+
+    void ContinueSuperJump()
+    {
+        if (superJumpHoldTimer > 0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y + superJumpHoldForce * Time.deltaTime);
+            superJumpHoldTimer -= Time.deltaTime;
+        }
+        else
+        {
+            StopSuperJump();
+        }
+    }
+
+    void StopSuperJump()
+    {
+        isSuperJumping = false;
+    }
+
+    public void GiveSuperJump()
+    {
+        hasSuperJump = true;
+    }
+
     void Flip()
     {
         isFacingRight = !isFacingRight;
