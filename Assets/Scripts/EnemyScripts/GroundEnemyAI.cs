@@ -35,6 +35,9 @@ public class GroundEnemyAI : MonoBehaviour
     [SerializeField] private float fireRate = 1.2f;
     [SerializeField] private int damage = 8;
 
+    [SerializeField, Range(0f, 1f)] private float accuracy = 0.75f;
+    [SerializeField] private float maxInaccuracyAngle = 25f;
+
     [Header("Line Of Sight Settings")]
     [SerializeField] private LayerMask lineOfSightMask;
     [SerializeField] private bool drawLineOfSightGizmo = true;
@@ -331,6 +334,21 @@ public class GroundEnemyAI : MonoBehaviour
         return hit.collider.CompareTag("Player");
     }
 
+    private Vector2 ApplyAccuracy(Vector2 direction)
+    {
+        if (direction == Vector2.zero) return direction;
+
+        float inaccuracyAmount = 1f - accuracy;
+        float spreadAngle = maxInaccuracyAngle * inaccuracyAmount;
+
+        float randomAngle = Random.Range(-spreadAngle, spreadAngle);
+
+        Quaternion rotation = Quaternion.Euler(0f, 0f, randomAngle);
+        Vector2 inaccurateDirection = rotation * direction;
+
+        return inaccurateDirection.normalized;
+    }
+
     private void TryShoot()
     {
         if (fireTimer > 0f) return;
@@ -345,7 +363,9 @@ public class GroundEnemyAI : MonoBehaviour
 
         if (projectile != null)
         {
-            projectile.SetDirection(aimDirection);
+            Vector2 finalShootDirection = ApplyAccuracy(aimDirection);
+
+            projectile.SetDirection(finalShootDirection);
             projectile.SetDamage(damage);
         }
 
