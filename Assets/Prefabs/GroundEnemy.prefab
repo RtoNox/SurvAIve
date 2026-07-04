@@ -187,6 +187,8 @@ MonoBehaviour:
   shootingRange: 10
   fireRate: 1
   damage: 1
+  accuracy: 0.5
+  maxInaccuracyAngle: 30
   lineOfSightMask:
     serializedVersion: 2
     m_Bits: 328

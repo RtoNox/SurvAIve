@@ -230,6 +230,9 @@ MonoBehaviour:
   shootingRange: 15
   fireRate: 2
   damage: 2
+  homingTurnSpeed: 90
+  accuracy: 0.5
+  maxInaccuracyAngle: 45
   lineOfSightMask:
     serializedVersion: 2
     m_Bits: 328
