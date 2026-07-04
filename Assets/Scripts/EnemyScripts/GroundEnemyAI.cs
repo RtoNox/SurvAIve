@@ -50,6 +50,13 @@ public class GroundEnemyAI : MonoBehaviour
     [SerializeField] private float shootVolume = 1f;
     [SerializeField] private float shootPitchRandomness = 0.08f;
 
+    [SerializeField] private AudioClip footstepSound;
+    [SerializeField] private float footstepVolume = 0.7f;
+    [SerializeField] private float footstepInterval = 0.35f;
+    [SerializeField] private float footstepPitchRandomness = 0.1f;
+
+    private float footstepTimer;
+
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsJumping = Animator.StringToHash("IsJumping");
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
@@ -141,6 +148,7 @@ public class GroundEnemyAI : MonoBehaviour
             TryShoot();
         }
 
+        HandleFootsteps();
         FaceEnemy();
         UpdateAnimations();
     }
@@ -163,6 +171,26 @@ public class GroundEnemyAI : MonoBehaviour
 
         FollowPath();
         CheckForJumpPoint();
+    }
+
+    private void HandleFootsteps()
+    {
+        if (!isGrounded) return;
+        if (shouldStopAndShoot) return;
+        if (Mathf.Abs(rb.velocity.x) <= 0.1f) return;
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer > 0f) return;
+
+        footstepTimer = footstepInterval;
+
+        SoundEffectPlayer.PlaySound(
+            footstepSound,
+            transform.position,
+            footstepVolume,
+            footstepPitchRandomness
+        );
     }
 
     private void FindPlayerIfMissing()

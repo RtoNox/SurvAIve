@@ -37,6 +37,13 @@ public class FlyingEnemyAI : MonoBehaviour
     [SerializeField] private float volume = 1f;
     [SerializeField] private float pitchRandomness = 0.08f;
 
+    [SerializeField] private AudioClip movementSound;
+    [SerializeField] private float movementSoundVolume = 0.7f;
+    [SerializeField] private float movementSoundInterval = 0.45f;
+    [SerializeField] private float movementSoundPitchRandomness = 0.08f;
+
+    private float movementSoundTimer;
+
     private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     private static readonly int IsFlying = Animator.StringToHash("IsFlying");
     private static readonly int IsShooting = Animator.StringToHash("IsShooting");
@@ -118,7 +125,28 @@ public class FlyingEnemyAI : MonoBehaviour
             TryShoot();
         }
 
+        HandleMovementSound();
         UpdateAnimations();
+    }
+
+    private void HandleMovementSound()
+    {
+        if (aiPath == null) return;
+        if (aiPath.isStopped) return;
+        if (aiPath.velocity.magnitude <= 0.1f) return;
+
+        movementSoundTimer -= Time.deltaTime;
+
+        if (movementSoundTimer > 0f) return;
+
+        movementSoundTimer = movementSoundInterval;
+
+        SoundEffectPlayer.PlaySound(
+            movementSound,
+            transform.position,
+            movementSoundVolume,
+            movementSoundPitchRandomness
+        );
     }
 
     private void FindPlayerIfMissing()

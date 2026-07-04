@@ -52635,7 +52635,7 @@ Transform:
   m_GameObject: {fileID: 813740280}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52682,7 +52682,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 2057085869, guid: d1f28d986aa2f3f4985049e8136db6d6, type: 3}
+  m_Sprite: {fileID: 1674341634, guid: fec1c0ec07cace545a6fdf8dabee27f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -62401,8 +62401,8 @@ MonoBehaviour:
   superJumpHoldForce: 50
   maxSuperJumpHoldTime: 0.5
   footstepSound: {fileID: 8300000, guid: 96f77dff4ab468449b9386f15e839258, type: 3}
-  footstepVolume: 0.7
-  footstepInterval: 0.5
+  footstepVolume: 0.5
+  footstepInterval: 0.35
   footstepPitchRandomness: 0.05
   groundCheckPoint: {fileID: 1199054543}
   groundLayer:
@@ -127380,7 +127380,7 @@ Transform:
   m_GameObject: {fileID: 1939251429}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0, z: 0}
+  m_LocalPosition: {x: 0.5, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
