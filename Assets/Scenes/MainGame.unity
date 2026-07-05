@@ -9420,7 +9420,7 @@ Transform:
   m_GameObject: {fileID: 139653471}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -104, y: 2, z: 0}
+  m_LocalPosition: {x: -104, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14122,9 +14122,9 @@ GameObject:
   - component: {fileID: 229077360}
   - component: {fileID: 229077362}
   - component: {fileID: 229077361}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Tilesheet 256 x 256 per Tiles_1 (9)
-  m_TagString: Wall
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62999,9 +62999,9 @@ GameObject:
   - component: {fileID: 984694155}
   - component: {fileID: 984694156}
   - component: {fileID: 984694157}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Tilesheet 256 x 256 per Tiles_1 (3)
-  m_TagString: Wall
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -65791,9 +65791,9 @@ GameObject:
   - component: {fileID: 1008734931}
   - component: {fileID: 1008734932}
   - component: {fileID: 1008734933}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Tilesheet 256 x 256 per Tiles_1 (7)
-  m_TagString: Wall
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96622,9 +96622,9 @@ GameObject:
   - component: {fileID: 1495791962}
   - component: {fileID: 1495791964}
   - component: {fileID: 1495791963}
-  m_Layer: 8
+  m_Layer: 3
   m_Name: Tilesheet 256 x 256 per Tiles_1 (14)
-  m_TagString: Wall
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
