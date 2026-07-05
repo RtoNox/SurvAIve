@@ -232,7 +232,7 @@ MonoBehaviour:
   firePoint: {fileID: 4938434636595006709}
   shootingRange: 15
   fireRate: 2
-  damage: 2
+  damage: 1
   homingTurnSpeed: 90
   accuracy: 0.5
   maxInaccuracyAngle: 45
