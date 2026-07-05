@@ -34974,8 +34974,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   secondsPerDifficultyLevel: 120
   maxDifficultyLevel: 3
-  moveSpeedIncreasePerLevel: 0.5
-  accuracyBonusPerLevel: 0.05
+  moveSpeedIncreasePerLevel: 1
+  accuracyBonusPerLevel: 0.1
   homingTurnSpeedIncreasePerLevel: 1
 --- !u!114 &525651276
 MonoBehaviour:
