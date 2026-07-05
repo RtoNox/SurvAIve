@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     
     private Animator animator;
+    private static readonly int IsMoving = Animator.StringToHash("IsMoving");
     
     void Start()
     {
@@ -91,7 +92,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (animator != null)
         {
-            animator.SetBool("IsMoving", Mathf.Abs(moveInput) > 0.1f);
+            animator.SetBool(IsMoving, Mathf.Abs(moveInput) > 0.1f);
         }
     }
     
