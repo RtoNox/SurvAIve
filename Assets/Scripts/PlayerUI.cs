@@ -1,13 +1,16 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
     [Header("Player Reference")]
     [SerializeField] private Health playerHealth;
 
-    [Header("UI Text")]
-    [SerializeField] private TextMeshProUGUI healthText;
+    [Header("Health Bar")]
+    [SerializeField] private Image healthFillImage;
+
+    [Header("Timer Text")]
     [SerializeField] private TextMeshProUGUI timerText;
 
     [Header("Timer Settings")]
@@ -25,7 +28,7 @@ public class PlayerUI : MonoBehaviour
             StartTimer();
         }
 
-        UpdateHealthText();
+        UpdateHealthBar();
         UpdateTimerText();
     }
 
@@ -41,7 +44,7 @@ public class PlayerUI : MonoBehaviour
             elapsedTime += Time.deltaTime;
         }
 
-        UpdateHealthText();
+        UpdateHealthBar();
         UpdateTimerText();
     }
 
@@ -56,17 +59,18 @@ public class PlayerUI : MonoBehaviour
         playerHealth = playerObject.GetComponent<Health>();
     }
 
-    private void UpdateHealthText()
+    private void UpdateHealthBar()
     {
-        if (healthText == null) return;
+        if (healthFillImage == null) return;
 
         if (playerHealth == null)
         {
-            healthText.text = "HP: -- / --";
+            healthFillImage.fillAmount = 0f;
             return;
         }
 
-        healthText.text = "HP: " + playerHealth.CurrentHealth + " / " + playerHealth.MaxHealth;
+        float healthPercent = (float)playerHealth.CurrentHealth / playerHealth.MaxHealth;
+        healthFillImage.fillAmount = Mathf.Clamp01(healthPercent);
     }
 
     private void UpdateTimerText()
